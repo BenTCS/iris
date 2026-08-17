@@ -1,0 +1,15 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "credits": {
+      "type": "number",
+      "default": 1000
+    },
+    "last_credits_reset_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": []
+}
