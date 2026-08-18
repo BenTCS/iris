@@ -13,6 +13,7 @@ import ResetPassword from '@/pages/ResetPassword';
 import Dashboard from '@/pages/Dashboard';
 import ApiDocs from '@/pages/ApiDocs';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { useAuth } from '@/lib/AuthContext';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();

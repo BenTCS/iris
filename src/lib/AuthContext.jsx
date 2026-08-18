@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-
+import { useAuth } from '@/lib/AuthContext';
 // Mock/fallback local user management replacing the old Base44 SDK dependency
 const DEFAULT_USER = {
   id: "user_local_1",
