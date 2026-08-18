@@ -42,13 +42,18 @@ export function ChatView() {
     if (anonLimitReached || outOfCredits || thinking) return;
 
     const userMessage = { id: uid(), role: "user", content: text };
+    const history = messages.map((m) => ({ role: m.role, content: m.content }));
     setMessages((prev) => [...prev, userMessage]);
     setThinking(true);
 
     const startedAt = Date.now();
     let answer;
     try {
-      const res = await db.functions.invoke("chatWithAi", { message: text });
+      const res = await db.functions.invoke("chatWithAi", {
+        message: text,
+        history,
+        user_id: user?.id || null,
+      });
       answer = res.data?.reply ?? "Sorry, I couldn't get a response from the AI.";
     } catch (e) {
       answer = "Sorry, something went wrong reaching the AI. Please try again.";

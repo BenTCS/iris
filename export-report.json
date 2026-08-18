@@ -1,7 +1,7 @@
 {
-  "exportedAt": "2026-08-17T21:20:24.002Z",
-  "exportDurationMs": 16925,
-  "fileCount": 99,
+  "exportedAt": "2026-08-18T15:16:05.457Z",
+  "exportDurationMs": 19723,
+  "fileCount": 102,
   "assetCount": 0,
   "resolvedAssetCount": 0,
   "missingAssets": [],
@@ -13,8 +13,8 @@
     "assetCount": 0,
     "pendingFetches": 0,
     "pendingImages": 0,
-    "domNodeCount": 3829,
+    "domNodeCount": 4333,
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-    "exportDurationMs": 16925
+    "exportDurationMs": 19724
   }
 }

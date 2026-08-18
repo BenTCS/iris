@@ -17,6 +17,8 @@ import {
   User as UserIcon,
   Gauge,
   LogIn,
+  BookOpen,
+  Shield,
 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -191,15 +193,22 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={resetCredits}
-                  disabled={resetting}
-                  className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/60 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:border-primary/50 hover:bg-primary/5 disabled:opacity-50"
-                >
-                  {resetting ? <Loader2 className="size-3 animate-spin" /> : <RefreshCw className="size-3" />}
-                  Reset now
-                </button>
+                {user?.role === "admin" ? (
+                  <button
+                    type="button"
+                    onClick={resetCredits}
+                    disabled={resetting}
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/60 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:border-primary/50 hover:bg-primary/5 disabled:opacity-50"
+                  >
+                    {resetting ? <Loader2 className="size-3 animate-spin" /> : <RefreshCw className="size-3" />}
+                    Reset now
+                  </button>
+                ) : (
+                  <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Clock className="size-3" />
+                    Resets automatically at midnight
+                  </p>
+                )}
               </div>
 
               {/* API keys card */}
@@ -214,6 +223,13 @@ export default function Dashboard() {
                 <p className="mt-1 text-xs text-muted-foreground">
                   No limit on keys · Unlimited usage
                 </p>
+                <Link
+                  to="/api-docs"
+                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary transition-opacity hover:opacity-80"
+                >
+                  <BookOpen className="size-3.5" />
+                  How to use your API key
+                </Link>
               </div>
             </div>
 
@@ -231,7 +247,10 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center justify-between gap-3">
                     <dt className="text-muted-foreground">Role</dt>
-                    <dd className="font-medium capitalize">{user?.role ?? "—"}</dd>
+                    <dd className="flex items-center gap-1.5 font-medium capitalize">
+                      {user?.role === "admin" && <Shield className="size-3.5 text-primary" />}
+                      {user?.role ?? "—"}
+                    </dd>
                   </div>
                   <div className="flex items-center justify-between gap-3">
                     <dt className="text-muted-foreground">Member since</dt>
