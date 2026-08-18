@@ -1,5 +1,3 @@
-const db = globalThis.__B44_DB__ || { auth:{ isAuthenticated: async()=>false, me: async()=>null }, entities:new Proxy({}, { get:()=>({ filter:async()=>[], get:async()=>null, create:async()=>({}), update:async()=>({}), delete:async()=>({}) }) }), integrations:{ Core:{ UploadFile:async()=>({ file_url:'' }) } } };
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -8,7 +6,7 @@ import {
   Trash2,
   Copy,
   Check,
-  Loader as Loader2,
+  Loader2,
   Coins,
   Activity,
   ArrowLeft,
@@ -20,16 +18,23 @@ import {
   BookOpen,
   Shield,
 } from "lucide-react";
-import { useAuth } from "@/lib/AuthContext";
 
 import { Button } from "@/components/ui/button";
 import AmbientBackground from "@/components/AmbientBackground";
-import {
-  DAILY_CREDIT_ALLOTMENT,
-  ensureDailyCredits,
-  msUntilMidnight,
-  formatDuration,
-} from "@/lib/credits";
+
+// Mock constant/helpers replacing the old Base44 library
+const DAILY_CREDIT_ALLOTMENT = 100;
+function msUntilMidnight(now) {
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return midnight.getTime() - now.getTime();
+}
+function formatDuration(ms) {
+  const totalSecs = Math.floor(ms / 1000);
+  const hrs = Math.floor(totalSecs / 3600);
+  const mins = Math.floor((totalSecs % 3600) / 60);
+  return `${hrs}h ${mins}m`;
+}
 
 function generateApiKey() {
   const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -39,8 +44,8 @@ function generateApiKey() {
 }
 
 export default function Dashboard() {
-  const { user, checkUserAuth, isAuthenticated } = useAuth();
-
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [keys, setKeys] = useState([]);
   const [keysLoading, setKeysLoading] = useState(true);
   const [newKeyName, setNewKeyName] = useState("");
@@ -51,11 +56,25 @@ export default function Dashboard() {
   const [resetting, setResetting] = useState(false);
   const [now, setNow] = useState(new Date());
 
+  useEffect(() => {
+    const savedUser = localStorage.getItem('iris_user');
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        setUser(parsed);
+        setIsAuthenticated(true);
+      } catch (e) {
+        setIsAuthenticated(false);
+      }
+    }
+  }, []);
+
   async function loadKeys() {
     setKeysLoading(true);
     try {
-      const data = await db.entities.ApiKey.list("-created_date", 50);
-      setKeys(data);
+      // Local storage fallback for API keys since base44 db is removed
+      const savedKeys = localStorage.getItem('iris_api_keys');
+      setKeys(savedKeys ? JSON.parse(savedKeys) : []);
     } catch (e) {
       setKeys([]);
     }
@@ -77,14 +96,20 @@ export default function Dashboard() {
     try {
       const fullKey = generateApiKey();
       const prefix = fullKey.slice(0, 12);
-      await db.entities.ApiKey.create({
+      const newKeyObj = {
+        id: Date.now().toString(),
         name: newKeyName.trim(),
         key_prefix: prefix,
         key_value: fullKey,
-      });
+        created_date: new Date().toISOString(),
+      };
+
+      const updatedKeys = [newKeyObj, ...keys];
+      setKeys(updatedKeys);
+      localStorage.setItem('iris_api_keys', JSON.stringify(updatedKeys));
+
       setRevealedKey(fullKey);
       setNewKeyName("");
-      if (isAuthenticated) await loadKeys();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create key.");
     } finally {
@@ -94,8 +119,9 @@ export default function Dashboard() {
 
   async function handleDeleteKey(id) {
     try {
-      await db.entities.ApiKey.delete(id);
-      setKeys((prev) => prev.filter((k) => k.id !== id));
+      const updatedKeys = keys.filter((k) => k.id !== id);
+      setKeys(updatedKeys);
+      localStorage.setItem('iris_api_keys', JSON.stringify(updatedKeys));
     } catch (e) {
       // ignore
     }
@@ -108,7 +134,7 @@ export default function Dashboard() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const credits = user?.credits ?? 0;
+  const credits = user?.credits ?? DAILY_CREDIT_ALLOTMENT;
   const creditsUsedToday = Math.max(0, DAILY_CREDIT_ALLOTMENT - credits);
   const usagePct = Math.min(100, Math.round((creditsUsedToday / DAILY_CREDIT_ALLOTMENT) * 100));
   const resetsIn = formatDuration(msUntilMidnight(now));
@@ -116,8 +142,9 @@ export default function Dashboard() {
   async function resetCredits() {
     setResetting(true);
     try {
-      await ensureDailyCredits({ ...user, last_credits_reset_date: "__force__" });
-      await checkUserAuth();
+      const updatedUser = { ...user, credits: DAILY_CREDIT_ALLOTMENT };
+      setUser(updatedUser);
+      localStorage.setItem('iris_user', JSON.stringify(updatedUser));
     } catch (err) {
       setError("Failed to reset credits.");
     } finally {
@@ -249,7 +276,7 @@ export default function Dashboard() {
                     <dt className="text-muted-foreground">Role</dt>
                     <dd className="flex items-center gap-1.5 font-medium capitalize">
                       {user?.role === "admin" && <Shield className="size-3.5 text-primary" />}
-                      {user?.role ?? "—"}
+                      {user?.role ?? "User"}
                     </dd>
                   </div>
                   <div className="flex items-center justify-between gap-3">
@@ -303,7 +330,7 @@ export default function Dashboard() {
           </section>
         )}
 
-        {/* Create key — public */}
+        {/* Create key */}
         <section className="mb-8 rounded-2xl border border-border/70 bg-card/80 p-5 shadow-sm backdrop-blur">
           <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold">
             <Plus className="size-4" />
@@ -351,7 +378,7 @@ export default function Dashboard() {
           )}
         </section>
 
-        {/* Keys list — auth only */}
+        {/* Keys list */}
         {isAuthenticated && (
           <section className="rounded-2xl border border-border/70 bg-card/80 p-5 shadow-sm backdrop-blur">
             <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold">
