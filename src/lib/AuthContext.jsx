@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         setUser(parsed);
         setIsAuthenticated(true);
       } else {
-        // Default to logged-in mock user for smooth standalone experience, or leave unauthenticated
+        // Default to logged-in mock user for smooth standalone experience
         setUser(DEFAULT_USER);
         setIsAuthenticated(true);
         localStorage.setItem('iris_user', JSON.stringify(DEFAULT_USER));
