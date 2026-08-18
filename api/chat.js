@@ -6,13 +6,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, history } = req.body;
+    const { message, history, user_id } = req.body;[cite: 1]
 
-    const aiUrl = process.env.IRIS_AI_URL;
-    const apiKey = process.env.IRIS_AI_API_KEY;
+    const aiUrl = process.env.IRIS_AI_URL;[cite: 1]
+    const apiKey = process.env.IRIS_AI_API_KEY;[cite: 1]
 
     if (!aiUrl || !apiKey) {
-      return res.status(500).json({ error: "Server environment variables are not configured." });
+      return res.status(500).json({ error: "Server environment variables are not configured." });[cite: 1]
     }
 
     // Secure server-to-server request to your AI backend / Cloudflare tunnel
@@ -22,17 +22,17 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({ message, history }),
+      body: JSON.stringify({ message, history, user_id }),[cite: 1]
     });
 
     if (!apiRes.ok) {
-      return res.status(500).json({ error: `AI endpoint returned status ${apiRes.status}` });
+      return res.status(500).json({ error: `AI endpoint returned status ${apiRes.status}` });[cite: 1]
     }
 
-    const data = await apiRes.json();
-    return res.status(200).json(data);
+    const data = await apiRes.json();[cite: 1]
+    return res.status(200).json(data);[cite: 1]
 
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });[cite: 1]
   }
 }
