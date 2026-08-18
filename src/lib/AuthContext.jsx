@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useAuth } from '@/lib/AuthContext';
-// Mock/fallback local user management replacing the old Base44 SDK dependency
+
 const DEFAULT_USER = {
   id: "user_local_1",
   email: "developer@example.com",
@@ -21,15 +20,12 @@ export const AuthProvider = ({ children }) => {
   const [appPublicSettings, setAppPublicSettings] = useState({ id: "iris-local", name: "Iris AI" });
 
   useEffect(() => {
-    // Check local storage for existing session
     try {
       const savedUser = localStorage.getItem('iris_user');
       if (savedUser) {
-        const parsed = JSON.parse(savedUser);
-        setUser(parsed);
+        setUser(JSON.parse(savedUser));
         setIsAuthenticated(true);
       } else {
-        // Default to logged-in mock user for smooth standalone experience
         setUser(DEFAULT_USER);
         setIsAuthenticated(true);
         localStorage.setItem('iris_user', JSON.stringify(DEFAULT_USER));
