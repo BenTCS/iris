@@ -43,7 +43,7 @@ export function ChatComposer({ onSend, disabled }) {
           }}
           onKeyDown={handleKeyDown}
           rows={1}
-          placeholder="Message Verdant…"
+          placeholder="Message Jude…"
           aria-label="Message input"
           className="max-h-40 flex-1 resize-none bg-transparent px-3 py-2.5 text-[0.95rem] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none"
         />

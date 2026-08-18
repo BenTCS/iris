@@ -149,7 +149,7 @@ export default function Login() {
   return (
     <AuthLayout
       icon={Sparkles}
-      title="Verdant"
+      title="Jude"
       subtitle="AI Assistant"
       footer={
         mode === "signin" ? (

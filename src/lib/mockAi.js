@@ -19,7 +19,7 @@ const replies = [
 export function generateReply(prompt) {
   const trimmed = prompt.trim().toLowerCase();
   if (/^(hi|hey|hello|yo|sup)\b/.test(trimmed)) {
-    return "Hey there! I'm Verdant, your calm little AI companion. What's on your mind today?";
+    return "Hey there! I'm Jude, your calm little AI companion. What's on your mind today?";
   }
   if (trimmed.includes("thank")) {
     return "You're very welcome — happy to help anytime. Anything else I can do for you?";

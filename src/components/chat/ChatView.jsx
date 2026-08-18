@@ -149,7 +149,7 @@ export function ChatView() {
           </div>
 
           <div className="leading-tight">
-            <p className="text-sm font-semibold">Iris</p>
+            <p className="text-sm font-semibold">Jude</p>
             <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
               AI Assistant
             </p>

@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(true);
-  const [appPublicSettings, setAppPublicSettings] = useState({ id: "iris-local", name: "Iris AI" });
+  const [appPublicSettings, setAppPublicSettings] = useState({ id: "iris-local", name: "Jude AI" });
 
   useEffect(() => {
     try {
