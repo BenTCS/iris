@@ -1,3 +1,4 @@
+import ReactMarkdown from "react-markdown";
 import { Sparkles, User, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +35,49 @@ export function MessageBubble({ message }) {
         <span className="sr-only">
           {isUser ? "You said: " : "Assistant said: "}
         </span>
-        {message.content}
+        {isUser ? (
+          message.content
+        ) : (
+          <div className="prose-chat">
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => <p className="m-0">{children}</p>,
+                strong: ({ children }) => (
+                  <strong className="font-semibold">{children}</strong>
+                ),
+                em: ({ children }) => <em className="italic">{children}</em>,
+                code: ({ children }) => (
+                  <code className="rounded bg-background/60 px-1.5 py-0.5 font-mono text-[0.85em]">
+                    {children}
+                  </code>
+                ),
+                pre: ({ children }) => (
+                  <pre className="mt-2 overflow-x-auto rounded-lg bg-background/60 p-3 font-mono text-xs">
+                    {children}
+                  </pre>
+                ),
+                ul: ({ children }) => (
+                  <ul className="ml-4 list-disc space-y-1">{children}</ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="ml-4 list-decimal space-y-1">{children}</ol>
+                ),
+                a: ({ children, href }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline underline-offset-2"
+                  >
+                    {children}
+                  </a>
+                ),
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          </div>
+        )}
         {isUser && message.attachments && message.attachments.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2">
             {message.attachments.map((att, i) =>
