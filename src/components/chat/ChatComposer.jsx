@@ -73,7 +73,7 @@ export function ChatComposer({ onSend, disabled }) {
       files.map(async (file) => {
         if (isImageFile(file)) {
           const dataUrl = await readFileAsDataURL(file);
-          return { name: file.name, type: "image", size: file.size, dataUrl };
+          return { name: file.name, type: "image", size: file.size, dataUrl, file };
         }
         const content = await readFileAsText(file);
         return { name: file.name, type: "code", size: file.size, content };
