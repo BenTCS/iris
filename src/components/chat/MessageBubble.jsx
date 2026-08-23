@@ -1,4 +1,4 @@
-import { Sparkles, User } from "lucide-react";
+import { Sparkles, User, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function MessageBubble({ message }) {
@@ -35,6 +35,30 @@ export function MessageBubble({ message }) {
           {isUser ? "You said: " : "Assistant said: "}
         </span>
         {message.content}
+        {isUser && message.attachments && message.attachments.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {message.attachments.map((att, i) =>
+              att.type === "image" ? (
+                <img
+                  key={i}
+                  src={att.dataUrl}
+                  alt={att.name}
+                  className="max-h-32 max-w-full rounded-lg object-cover"
+                />
+              ) : (
+                <div
+                  key={i}
+                  className="flex items-center gap-1.5 rounded-lg bg-primary-foreground/10 px-2.5 py-1.5"
+                >
+                  <FileText className="size-3.5 shrink-0 text-primary-foreground/80" />
+                  <span className="text-xs font-medium text-primary-foreground/90">
+                    {att.name}
+                  </span>
+                </div>
+              )
+            )}
+          </div>
+        )}
         {!isUser && message.thinkingMs != null && (
           <div className="mt-2 flex items-center gap-2 border-t border-border/40 pt-2 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-muted-foreground">
             <span>

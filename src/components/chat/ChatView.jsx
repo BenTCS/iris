@@ -38,12 +38,23 @@ export function ChatView() {
     });
   }, [messages, thinking]);
 
-  async function handleSend(text) {
+  async function handleSend(text, attachments = []) {
     if (anonLimitReached || outOfCredits || thinking) return;
 
-    const userMessage = { id: uid(), role: "user", content: text };
+    const userMessage = { id: uid(), role: "user", content: text, attachments };
     setMessages((prev) => [...prev, userMessage]);
     setThinking(true);
+
+    let fullMessage = text;
+    if (attachments && attachments.length > 0) {
+      const fileParts = attachments.map((a) => {
+        if (a.type === "image") {
+          return `[Attached image: ${a.name}]`;
+        }
+        return `[Attached file: ${a.name}]\n\`\`\`\n${a.content}\n\`\`\``;
+      });
+      fullMessage = text ? `${text}\n\n${fileParts.join("\n\n")}` : fileParts.join("\n\n");
+    }
 
     const startedAt = Date.now();
     let answer;
@@ -69,7 +80,7 @@ export function ChatView() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: text,
+          message: fullMessage,
           history: messages,
           user_id: user?.id || "anonymous",
         }),
